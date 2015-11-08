@@ -1,0 +1,19 @@
+Metadata-Version: 1.1
+Name: python-tile-generator
+Version: 0.1
+Summary: an image tile genetator accepting multiple scale level
+Home-page: none
+Author: Sébastien Berthier
+Author-email: sebastien.berthier@haumea.fr
+License: MIT
+Description: an image tile generator accepting multiple scale level
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developpers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Environment :: Console
+Classifier: Operating System :: POSIX
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 2
+Classifier: Topic :: Multimedia :: Graphics
