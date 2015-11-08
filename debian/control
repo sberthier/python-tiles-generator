@@ -19,6 +19,7 @@ Depends:
  ${misc:Depends},
  ${python:Depends},
  python-pillow,
+Conflicts: python3-tiles-generator
 Description: An image tile genetator that accept multiple scale level
  .
  This package is ...
@@ -29,6 +30,7 @@ Depends:
  ${misc:Depends},
  ${python3:Depends},
  python3-pillow
+Conflicts: python-tiles-generator
 Description: An image tile genetator that accept multiple scale level
  .
  This package is ...
