@@ -65,13 +65,13 @@ class TilesGenerator:
 
     """ Public """
     def process(self, level):
-        if level < 1:
-            print('error: level ' + repr(level) + " should be greater or equal to 1")
+        if level < 0:
+            print('error: level ' + repr(level) + " should be greater or equal to 0")
             sys.exit(6)
 
         self.level = level
         self._processLevel()
-        while self.level > 1:
+        while self.level > 0:
             self.level = self.level - 1
             self.image = self.image.resize((int(self.image.size[0]/2) , int(self.image.size[1]/2)));
             self._processLevel()
@@ -161,7 +161,7 @@ class TilesWriter:
         output = output.replace('%y', '$y')
         output = output.replace('%nx', '$nx')
         output = output.replace('%ny', '$ny')
-        if level > 1:
+        if level > 0:
             if '$l' not in output:
                 print('Error, $l should be in output because level > 1 (=' + repr(level) + ')')
                 sys.exit(14)
@@ -249,10 +249,10 @@ def usage():
     print('usage: ' + sys.argv[0] + ' ')
     print('    -o --output <template thar container %l level, %x and %y for crop offset')
     print('                    or %nx and %ny for num of tile  ="$filename/%l/%nx/%ny.$format>')
-    print('    -l --level <=3> ')
-    print('    -s --size <size of the tiles =256>')
-    print('    -f --format <(JPEG, PNG) =JPEG>')
-    print('    -q --quality <quality for JPEG=90> ')
+    print('    -l --level <produce n+1 levels   =3> ')
+    print('    -s --size <size of the tiles   =256>')
+    print('    -f --format <(JPEG, PNG)   =JPEG>')
+    print('    -q --quality <quality for JPEG   =90> ')
     print('    --log <debug,info,warn,error,critical>')
     print('    <image.png>')
     return
