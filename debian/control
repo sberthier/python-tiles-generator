@@ -1,0 +1,32 @@
+Source: python-tiles-generator
+Section: python
+Priority: optional
+Maintainer: Sébastien Berthier <sebastien.berthier@haumea.fr>
+Uploaders: Sébastien Berthier <sebastien.berthier@haumea.fr>
+Build-Depends:
+ debhelper (>= 9),
+ python-all (>= 2.6.5-13~),
+ python-pillow,
+ python3-all  (>= 3.1.2-7~),
+ python3-pillow
+Standards-Version: 3.9.4
+X-Python-Version: >= 2.7
+X-Python3-Version: >= 3.0
+
+Package: python-tiles-generator
+Architecture: all
+Depends:
+ ${misc:Depends},
+ ${python:Depends},
+Description: An image tile genetator that accept multiple scale level
+ .
+ This package is ...
+
+Package: python3-tiles-generator
+Architecture: all
+Depends:
+ ${misc:Depends},
+ ${python3:Depends},
+Description: An image tile genetator that accept multiple scale level
+ .
+ This package is ...

@@ -61,7 +61,8 @@ setup(
     long_description = __doc__.strip(),
     classifiers = classifiers,
     cmdclass = dict(build_py=build_py),
-    py_modules = ['tiles-generator'],
+    py_modules = ['tiles_generator'],
+    scripts=['bin/tiles-generator'],
 )
 
 # vim:ts=4 sw=4 et
