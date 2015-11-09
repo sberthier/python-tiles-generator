@@ -120,25 +120,31 @@ class TilesGenerator:
             for j in range(0, n_h):
                 y = j * tile_h
                 self._doTile(x, y, tile_w, tile_h, i,j)
+
+	small_right = w % tile_w != 0
+	small_bottom = h % tile_h != 0
     
         # tiles du bas
-        y = n_h * tile_h
+       	y = n_h * tile_h
         last_tile_h = h - y
-        for i in range(0, n_w):
-            x = i * tile_w
-            self._doTile(x, y, tile_w, last_tile_h, i, n_h)
+	if small_bottom:
+        	for i in range(0, n_w):
+			x = i * tile_w
+            		self._doTile(x, y, tile_w, last_tile_h, i, n_h)
     
         # tiles du droite
-        x = n_w * tile_w
+       	x = n_w * tile_w
         last_tile_w = w - x
-        for j in range(0, n_h):
-            y = j * tile_h
-            self._doTile(x, y, last_tile_w, tile_h, n_w, j)
+	if small_right:
+        	for j in range(0, n_h):
+            		y = j * tile_h
+            		self._doTile(x, y, last_tile_w, tile_h, n_w, j)
 
         # tile du bas a droite
-        y = n_h * tile_h
-        x = n_w * tile_w
-        self._doTile(x, y, last_tile_w, last_tile_h, n_w, n_h)
+	if small_right and small_bottom:
+        	y = n_h * tile_h
+        	x = n_w * tile_w
+        	self._doTile(x, y, last_tile_w, last_tile_h, n_w, n_h)
         return
 
 
