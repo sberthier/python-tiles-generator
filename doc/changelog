@@ -1,3 +1,10 @@
+python-tiles-generator (0.1-3) unstable; urgency=low
+
+  * Correction bug image size pow2
+  * ajout option resample
+
+ -- Sébastien Berthier <sebastien.berthier@haumea.fr>  Thu, 10 Nov 2015 9:00:00 +0100
+
 python-tiles-generator (0.1-1) unstable; urgency=low
 
   * Initial release.

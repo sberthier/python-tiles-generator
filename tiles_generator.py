@@ -28,20 +28,20 @@ import os, getopt, sys, logging, shutil
 from PIL import Image
 from string import Template
 
-CONST_FILENAME = "image.png"
 CONST_OUTPUT = Template("$filename/%l/%nx/%ny.$extension")
 CONST_LEVEL = 3
 CONST_OUTPUT_FORMAT = "JPEG"
 CONST_OUTPUT_QUALITY = 90
 CONST_TILE_SIZE = 256
+CONST_RESAMPLE = "ANTIALIAS"
 
 class Configuration:
-    filename = CONST_FILENAME
     output = None
     level = CONST_LEVEL
     output_format = CONST_OUTPUT_FORMAT
     output_quality = CONST_OUTPUT_QUALITY
     tile_size = CONST_TILE_SIZE
+    resample = CONST_RESAMPLE
 
 
 
@@ -50,16 +50,18 @@ class TilesGenerator:
     tilesWriter = None
     tile_w = CONST_TILE_SIZE
     tile_h = CONST_TILE_SIZE
+    resample = CONST_RESAMPLE
 
 
     """ Constructor """
-    def __init__(self, tilesWriter, tile_size=CONST_TILE_SIZE):
+    def __init__(self, tilesWriter, tile_size=CONST_TILE_SIZE, resample=CONST_RESAMPLE):
         if tile_size < 16:
             print('error: size ' + repr(tile_size) + " should be greater or equal to 16")
             sys.exit(7)
         self.tile_w = tile_size
         self.tile_h = tile_size
         self.tilesWriter = tilesWriter
+	self.resample = resample
         return
 
 
@@ -73,7 +75,7 @@ class TilesGenerator:
         self._processLevel()
         while self.level > 0:
             self.level = self.level - 1
-            self.image = self.image.resize((int(self.image.size[0]/2) , int(self.image.size[1]/2)));
+            self.image = self.image.resize((int(self.image.size[0]/2) , int(self.image.size[1]/2)), getattr(Image, self.resample));
             self._processLevel()
         return
 
@@ -199,8 +201,8 @@ def readOptions(argv):
     config = Configuration()
 
     try:
-        opts, args = getopt.getopt(argv,"ho:l:s:f:q:",["help","output=", 
-            "level=", "size=", "format=", "quality=", "log="])
+        opts, args = getopt.getopt(argv,"ho:l:s:f:q:r:",["help","output=", 
+            "level=", "size=", "format=", "quality=", "log=", "resample="])
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -215,6 +217,12 @@ def readOptions(argv):
             sys.exit(0)
         elif opt in ("-o", "--output"):
             config.output = arg
+        elif opt in ("-r", "--resample"):
+            if arg in ("nearest", "bilinear", "bicubic", "antialias"):
+                config.resample=arg.upper()
+	    else:
+                print("resample " + arg + " unknown")
+                sys.exit(9)
         elif opt in ("-l", "--level"):
             config.level = int(arg)
         elif opt in ("-s", "--size"):
@@ -244,7 +252,7 @@ def main(argv):
     tilesWriter = TilesWriter(config.output, config.output_format,
             config.output_quality, config.level)
 
-    tilesGenerator = TilesGenerator(tilesWriter, config.tile_size)
+    tilesGenerator = TilesGenerator(tilesWriter, config.tile_size, config.resample)
     tilesGenerator.open(config.filename)
     tilesGenerator.process(config.level)
     tilesGenerator.close()
@@ -256,6 +264,7 @@ def usage():
     print('    -o --output <template thar container %l level, %x and %y for crop offset')
     print('                    or %nx and %ny for num of tile  ="$filename/%l/%nx/%ny.$format>')
     print('    -l --level <produce n+1 levels   =3> ')
+    print('    -r --resample <nearest, bilinear, bicubic, antialias =antialias>')
     print('    -s --size <size of the tiles   =256>')
     print('    -f --format <(JPEG, PNG)   =JPEG>')
     print('    -q --quality <quality for JPEG   =90> ')
