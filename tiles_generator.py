@@ -44,6 +44,10 @@ class Configuration:
     tile_size = CONST_TILE_SIZE
 
 
+def print_error_and_exit(message, code=1):
+    sys.stderr.write("error: " + message + "\n")
+    sys.exit(code)
+	
 
 class TilesGenerator:
     image = None
@@ -55,8 +59,7 @@ class TilesGenerator:
     """ Constructor """
     def __init__(self, tilesWriter, tile_size=CONST_TILE_SIZE):
         if tile_size < 16:
-            print('error: size ' + repr(tile_size) + " should be greater or equal to 16")
-            sys.exit(7)
+            print_error_and_exit('size ' + repr(tile_size) + " should be greater or equal to 16", 7)
         self.tile_w = tile_size
         self.tile_h = tile_size
         self.tilesWriter = tilesWriter
@@ -66,8 +69,7 @@ class TilesGenerator:
     """ Public """
     def process(self, level):
         if level < 0:
-            print('error: level ' + repr(level) + " should be greater or equal to 0")
-            sys.exit(6)
+            print_error_and_exit('level ' + repr(level) + " should be greater or equal to 0", 6)
 
         self.level = level
         self._processLevel()
@@ -80,12 +82,10 @@ class TilesGenerator:
     def open(self, filename):
         try:
             if os.path.exists(filename) == 0:
-                print("error: file " + filename + " does not exist")
-                sys.exit(3)
+                print_error_and_exit("file " + filename + " does not exist", 3)
             self.image = Image.open(filename);
         except IOError:
-            print('error: can not open image ' + filename)
-            sys.exit(10)
+            print_error_and_exit('can not open image ' + filename, 10)
         return
 
     def close(self):
@@ -157,11 +157,9 @@ class TilesWriter:
     """ Constructor """
     def __init__(self, output, format=CONST_OUTPUT_FORMAT, quality=CONST_OUTPUT_QUALITY, level=CONST_LEVEL):
         if quality not in list(range(1, 100)):
-            print('error: quality ' + repr(quality) + " not between 1 and 99")
-            sys.exit(4)
+            print_error_and_exit('quality ' + repr(quality) + " not between 1 and 99", 4)
         if format not in ("JPEG", "PNG"):
-            print('error: format ' + repr(format) + " not JPEG or PNG")
-            sys.exit(5)
+            print_error_and_exit('format ' + repr(format) + " not JPEG or PNG", 5)
         output = output.replace('%l', '$l')
         output = output.replace('%x', '$x')
         output = output.replace('%y', '$y')
@@ -169,12 +167,10 @@ class TilesWriter:
         output = output.replace('%ny', '$ny')
         if level > 0:
             if '$l' not in output:
-                print('Error, $l should be in output because level > 1 (=' + repr(level) + ')')
-                sys.exit(14)
+                print_error_and_exit('$l should be in output because level > 1 (=' + repr(level) + ')', 14)
         if '$x' not in output or '$y' not in output:
             if '$nx' not in output or '$ny' not in output:
-                print('Error, $x and $y or/and $nx and $ny should be in output')
-                sys.exit(14)
+                print_error_and_exit('$x and $y or/and $nx and $ny should be in output', 14)
 
         self.format = format
         self.quality = quality
@@ -207,7 +203,7 @@ def readOptions(argv):
 
     if len(args) == 0:
         usage()
-        sys.exit(1)
+        sys.exit(2)
 
     for opt, arg in opts:
         if opt in ('-h', '--help'):
@@ -227,8 +223,7 @@ def readOptions(argv):
             if arg in ("debug", "info", "warn", "error", "critical"):
                 logging.basicConfig(level=arg.upper())
             else:
-                print("log level " + arg + " does not exist")
-                sys.exit(9)
+                print_error_and_exit("log level " + arg + " does not exist", 9)
 
     config.filename = args[0]
     if config.output is None:
