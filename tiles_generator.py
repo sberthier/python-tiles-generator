@@ -32,6 +32,8 @@ CONST_OUTPUT = Template("$filename/%l/%nx/%ny.$extension")
 CONST_LEVEL = 3
 CONST_OUTPUT_FORMAT = "JPEG"
 CONST_OUTPUT_QUALITY = 90
+CONST_OUTPUT_OPTIMIZE = False
+CONST_OUTPUT_PROGRESSIVE = False
 CONST_TILE_SIZE = 256
 CONST_RESAMPLE = "ANTIALIAS"
 
@@ -40,6 +42,8 @@ class Configuration:
     level = CONST_LEVEL
     output_format = CONST_OUTPUT_FORMAT
     output_quality = CONST_OUTPUT_QUALITY
+    output_optimize = CONST_OUTPUT_OPTIMIZE
+    output_progressive = CONST_OUTPUT_PROGRESSIVE
     tile_size = CONST_TILE_SIZE
     resample = CONST_RESAMPLE
 
@@ -153,11 +157,11 @@ class TilesGenerator:
 
 class TilesWriter:
     format = CONST_OUTPUT_FORMAT
-    quality = CONST_OUTPUT_QUALITY
     filename = None
+    options = {}
 
     """ Constructor """
-    def __init__(self, output, format=CONST_OUTPUT_FORMAT, quality=CONST_OUTPUT_QUALITY, level=CONST_LEVEL):
+    def __init__(self, output, format=CONST_OUTPUT_FORMAT, level=CONST_LEVEL, quality=CONST_OUTPUT_QUALITY, optimize=CONST_OUTPUT_OPTIMIZE, progressive=CONST_OUTPUT_PROGRESSIVE):
         if quality not in list(range(1, 100)):
             print_error_and_exit('quality ' + repr(quality) + " not between 1 and 99", 4)
         if format not in ("JPEG", "PNG"):
@@ -175,8 +179,15 @@ class TilesWriter:
                 print_error_and_exit('$x and $y or/and $nx and $ny should be in output', 14)
 
         self.format = format
-        self.quality = quality
         self.filename = Template(output)
+
+	self.options = {'quality': quality}
+	if progressive:
+		self.options['progressive'] = True
+	if optimize:
+		self.options['optimize'] = True
+
+	logging.info("TilesWriter: " + repr(self.options))
         return
 
 
@@ -188,7 +199,8 @@ class TilesWriter:
         if dirname != '' and not os.path.isdir(dirname):
             os.makedirs(dirname)
 
-        image.save(filename, self.format, quality=self.quality);
+        # image.save(filename, self.format, quality=self.quality, progressive=self.progressive, optimize=self.optimize);
+        image.save(filename, self.format, **self.options);
         return
 
 
@@ -198,7 +210,7 @@ def readOptions(argv):
 
     try:
         opts, args = getopt.getopt(argv,"ho:l:s:f:q:r:",["help","output=", 
-            "level=", "size=", "format=", "quality=", "log=", "resample="])
+            "level=", "size=", "format=", "quality=", "optimize", "progressive", "log=", "resample="])
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -227,6 +239,10 @@ def readOptions(argv):
             config.output_format = arg
         elif opt in ("-q", "--quality"):
             config.output_quality = int(arg)
+        elif opt in ("--optimize"):
+            config.output_optimize = True 
+        elif opt in ("--progressive"):
+            config.output_progressive = True 
         elif opt in ("--log"):
             if arg in ("debug", "info", "warn", "error", "critical"):
                 logging.basicConfig(level=arg.upper())
@@ -245,7 +261,7 @@ def readOptions(argv):
 def main(argv):
     config = readOptions(argv)
     tilesWriter = TilesWriter(config.output, config.output_format,
-            config.output_quality, config.level)
+            config.level, config.output_quality, config.output_optimize, config.output_progressive)
 
     tilesGenerator = TilesGenerator(tilesWriter, config.tile_size, config.resample)
     tilesGenerator.open(config.filename)
@@ -263,6 +279,8 @@ def usage():
     print('    -s --size <size of the tiles   =256>')
     print('    -f --format <(JPEG, PNG)   =JPEG>')
     print('    -q --quality <quality for JPEG   =90> ')
+    print('    --optimize <optimize for JPEG/PNG   =False> ')
+    print('    --progressive <optimize for JPEG   =False> ')
     print('    --log <debug,info,warn,error,critical>')
     print('    <image.png>')
     return

@@ -1,3 +1,9 @@
+python-tiles-generator (0.1-5) unstable; urgency=low
+
+  * Ajout options optimize et progressive pour png/jpg
+
+ -- Sébastien Berthier <sebastien.berthier@haumea.fr>  Thu, 05 Fev 2016 11:19:00 +0100
+
 python-tiles-generator (0.1-4) unstable; urgency=low
 
   * Message d'erreur sur stderr
