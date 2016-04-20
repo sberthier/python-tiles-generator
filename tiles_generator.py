@@ -25,7 +25,7 @@ an image tile generator accepting multiple scale level
 '''
 
 import os, getopt, sys, logging, shutil
-from PIL import Image
+from PIL import Image, ExifTags
 from string import Template
 
 CONST_OUTPUT = Template("$filename/%l/%nx/%ny.$extension")
@@ -36,6 +36,7 @@ CONST_OUTPUT_OPTIMIZE = False
 CONST_OUTPUT_PROGRESSIVE = False
 CONST_TILE_SIZE = 256
 CONST_RESAMPLE = "ANTIALIAS"
+CONST_AUTO_ORIENT = False
 
 class Configuration:
     output = None
@@ -46,6 +47,7 @@ class Configuration:
     output_progressive = CONST_OUTPUT_PROGRESSIVE
     tile_size = CONST_TILE_SIZE
     resample = CONST_RESAMPLE
+    auto_orient = CONST_AUTO_ORIENT
 
 
 def print_error_and_exit(message, code=1):
@@ -59,16 +61,18 @@ class TilesGenerator:
     tile_w = CONST_TILE_SIZE
     tile_h = CONST_TILE_SIZE
     resample = CONST_RESAMPLE
+    auto_orient = CONST_AUTO_ORIENT
 
 
     """ Constructor """
-    def __init__(self, tilesWriter, tile_size=CONST_TILE_SIZE, resample=CONST_RESAMPLE):
+    def __init__(self, tilesWriter, tile_size=CONST_TILE_SIZE, resample=CONST_RESAMPLE, auto_orient=CONST_AUTO_ORIENT):
         if tile_size < 16:
             print_error_and_exit('size ' + repr(tile_size) + " should be greater or equal to 16", 7)
         self.tile_w = tile_size
         self.tile_h = tile_size
         self.tilesWriter = tilesWriter
 	self.resample = resample
+	self.auto_orient = auto_orient
         return
 
 
@@ -89,7 +93,9 @@ class TilesGenerator:
         try:
             if os.path.exists(filename) == 0:
                 print_error_and_exit("file " + filename + " does not exist", 3)
-            self.image = Image.open(filename);
+            self.image = Image.open(filename)
+	    if self.auto_orient:
+		self._doAutoOrient()
         except IOError:
             print_error_and_exit('can not open image ' + filename, 10)
         return
@@ -109,6 +115,21 @@ class TilesGenerator:
         tile_image = self.image.crop((x, y, x+tile_w, y+tile_h))
         self.tilesWriter.save(tile_image, x, y, self.level, nx, ny)
         return
+
+    def _doAutoOrient(self):
+	for orientation in ExifTags.TAGS.keys():
+        	if ExifTags.TAGS[orientation]=='Orientation':
+            		break
+	exif=dict(self.image._getexif().items())
+
+        logging.info("image orientation =" + repr(exif[orientation]))
+    	if exif[orientation] == 3:
+        	self.image=self.image.rotate(180, expand=True)
+    	elif exif[orientation] == 6:
+        	self.image=self.image.rotate(270, expand=True)
+    	elif exif[orientation] == 8:
+        	self.image=self.image.rotate(90, expand=True)
+	return
 
     def _processLevel(self):
         w = int(self.image.size[0])
@@ -210,7 +231,7 @@ def readOptions(argv):
 
     try:
         opts, args = getopt.getopt(argv,"ho:l:s:f:q:r:",["help","output=", 
-            "level=", "size=", "format=", "quality=", "optimize", "progressive", "log=", "resample="])
+            "level=", "size=", "format=", "quality=", "optimize", "progressive", "auto-orient", "log=", "resample="])
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -243,6 +264,8 @@ def readOptions(argv):
             config.output_optimize = True 
         elif opt in ("--progressive"):
             config.output_progressive = True 
+        elif opt in ("--auto-orient"):
+            config.auto_orient = True 
         elif opt in ("--log"):
             if arg in ("debug", "info", "warn", "error", "critical"):
                 logging.basicConfig(level=arg.upper())
@@ -263,7 +286,7 @@ def main(argv):
     tilesWriter = TilesWriter(config.output, config.output_format,
             config.level, config.output_quality, config.output_optimize, config.output_progressive)
 
-    tilesGenerator = TilesGenerator(tilesWriter, config.tile_size, config.resample)
+    tilesGenerator = TilesGenerator(tilesWriter, config.tile_size, config.resample, config.auto_orient)
     tilesGenerator.open(config.filename)
     tilesGenerator.process(config.level)
     tilesGenerator.close()
@@ -281,6 +304,7 @@ def usage():
     print('    -q --quality <quality for JPEG   =90> ')
     print('    --optimize <optimize for JPEG/PNG   =False> ')
     print('    --progressive <optimize for JPEG   =False> ')
+    print('    --auto-orient <use exif orientation   =False> ')
     print('    --log <debug,info,warn,error,critical>')
     print('    <image.png>')
     return
