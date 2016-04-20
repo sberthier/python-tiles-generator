@@ -1,3 +1,9 @@
+python-tiles-generator (0.1-8) unstable; urgency=medium
+
+  * Correction bug if image._getexif() return NoneType
+
+ -- Sébastien Berthier <sebastien.berthier@haumea.fr>  Wed, 20 Apr 2016 14:27:18 +0200
+
 python-tiles-generator (0.1-7) unstable; urgency=medium
 
   * Correction bug if image has not exif

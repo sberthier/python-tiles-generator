@@ -120,8 +120,12 @@ class TilesGenerator:
 	for orientation in ExifTags.TAGS.keys():
         	if ExifTags.TAGS[orientation]=='Orientation':
             		break
-	exif=dict(self.image._getexif().items())
 
+	_exif=self.image._getexif()
+	if not hasattr(_exif, "items"):
+		return
+	
+	exif=dict(_exif.items())
 	if not hasattr(exif, "orientation"):
 		return
 
