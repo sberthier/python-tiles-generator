@@ -1,3 +1,46 @@
+python-tiles-generator (0.1-9) unstable; urgency=medium
+
+  * Correction auto-orient
+
+ -- Sébastien Berthier <sebastien.berthier@haumea.fr>  Wed, 20 Apr 2016 15:34:41 +0200
+
+python-tiles-generator (0.1-8) unstable; urgency=medium
+
+  * Correction bug if image._getexif() return NoneType
+
+ -- Sébastien Berthier <sebastien.berthier@haumea.fr>  Wed, 20 Apr 2016 14:27:18 +0200
+
+python-tiles-generator (0.1-7) unstable; urgency=medium
+
+  * Correction bug if image has not exif
+
+ -- Sébastien Berthier <sebastien.berthier@haumea.fr>  Wed, 20 Apr 2016 11:35:19 +0200
+
+python-tiles-generator (0.1-6) unstable; urgency=medium
+
+  * Ajout de l'option --auto-orient
+
+ -- Sébastien Berthier <sebastien.berthier@haumea.fr>  Wed, 20 Apr 2016 08:49:33 +0200
+
+python-tiles-generator (0.1-5) unstable; urgency=low
+
+  * Ajout options optimize et progressive pour png/jpg
+
+ -- Sébastien Berthier <sebastien.berthier@haumea.fr>  Thu, 05 Fev 2016 11:19:00 +0100
+
+python-tiles-generator (0.1-4) unstable; urgency=low
+
+  * Message d'erreur sur stderr
+
+ -- Sébastien Berthier <sebastien.berthier@haumea.fr>  Thu, 16 Nov 2015 11:06:00 +0100
+
+python-tiles-generator (0.1-3) unstable; urgency=low
+
+  * Correction bug image size pow2
+  * ajout option resample
+
+ -- Sébastien Berthier <sebastien.berthier@haumea.fr>  Thu, 10 Nov 2015 9:00:00 +0100
+
 python-tiles-generator (0.1-1) unstable; urgency=low
 
   * Initial release.

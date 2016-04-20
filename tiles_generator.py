@@ -126,7 +126,7 @@ class TilesGenerator:
 		return
 	
 	exif=dict(_exif.items())
-	if not hasattr(exif, "orientation"):
+	if not exif.has_key(orientation):
 		return
 
         logging.info("image orientation =" + repr(exif[orientation]))
