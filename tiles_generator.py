@@ -122,6 +122,9 @@ class TilesGenerator:
             		break
 	exif=dict(self.image._getexif().items())
 
+	if not hasattr(exif, "orientation"):
+		return
+
         logging.info("image orientation =" + repr(exif[orientation]))
     	if exif[orientation] == 3:
         	self.image=self.image.rotate(180, expand=True)
