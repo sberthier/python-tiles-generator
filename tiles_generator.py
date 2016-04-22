@@ -121,6 +121,9 @@ class TilesGenerator:
         	if ExifTags.TAGS[orientation]=='Orientation':
             		break
 
+	if not hasattr(self.image, "_getexif"):
+		return
+
 	_exif=self.image._getexif()
 	if not hasattr(_exif, "items"):
 		return

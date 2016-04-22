@@ -1,3 +1,9 @@
+python-tiles-generator (0.1-10) unstable; urgency=medium
+
+  * Correction auto-orient bis
+
+ -- Sébastien Berthier <sebastien.berthier@haumea.fr>  Fri, 22 Apr 2016 10:25:37 +0200
+
 python-tiles-generator (0.1-9) unstable; urgency=medium
 
   * Correction auto-orient
