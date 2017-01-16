@@ -1,3 +1,9 @@
+python-tiles-generator (0.1-11) unstable; urgency=medium
+
+  * fix image with transparency.
+
+ -- Sébastien Berthier <seb@sebas-debian.bbuzg.net>  Mon, 16 Jan 2017 16:17:31 +0100
+
 python-tiles-generator (0.1-10) unstable; urgency=medium
 
   * Correction auto-orient bis

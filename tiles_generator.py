@@ -231,7 +231,7 @@ class TilesWriter:
             os.makedirs(dirname)
 
         # image.save(filename, self.format, quality=self.quality, progressive=self.progressive, optimize=self.optimize);
-        image.save(filename, self.format, **self.options);
+        image.convert('RGB').save(filename, self.format, **self.options);
         return
 
 
